@@ -281,3 +281,18 @@ export async function searchCustomer(req, res) {
 };
 
 
+export async function zipCodeDeleveires(req, res){
+  try {
+    const zipcode = req.params;
+    if(!zipcode) throw { status: 'ok', data: [], message: 'Inalid/Missing Zipcode' }
+    const sql = `
+      select * from DeliveryMaster where ZIPCode = '${zipcode.zipcode}';
+    `
+    const rows = await runSql(sql, []);
+    res.json({status: 'ok', data: rows, message: `Showing Result form Zipcode ${zipcode.zipcode}`});
+  } catch (error) {
+    res.json(error);
+    log(error);
+  }
+}
+

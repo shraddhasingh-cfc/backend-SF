@@ -4,6 +4,8 @@ import path from 'path';
 import cors from "cors";
 import { fileURLToPath } from 'url';
 import apiRoutes from './routes/route.api.js';
+import os from 'os';
+
 const app = express();
 const PORT = process.env.PORT || 3000;
 
@@ -45,5 +47,28 @@ app.get(/.*/, (req, res) => {
 
 // ---------- START ----------
 app.listen(PORT, "0.0.0.0", () => {
-  console.log(`🚀 Server running on port ${PORT}`);
+  const networkInterfaces = os.networkInterfaces();
+  let hostAddress;
+  for (const name in networkInterfaces) {
+    const interfaces = networkInterfaces[name];
+    for (const iface of interfaces) {
+      if (iface.family === 'IPv4' && !iface.internal) {
+        hostAddress = iface.address;
+        break;
+      }
+    }
+    if (hostAddress) break;
+  }
+  if (hostAddress) {
+    console.log(`
+        Server started at:\n
+        server:       http://localhost:${PORT}
+        server:       http://${hostAddress}:${PORT}
+      `);
+  } else {
+    console.log(`
+        Server started on port ${PORT}, but could not determine host IP address.
+        server:       http://localhost:${PORT}
+      `);
+  }
 });
