@@ -16,6 +16,6 @@ router.get('/inventory/search', seachItems);
 router.get('/inventory/search/:itemid', seachItems);
 router.get('/vendors/search', searchVendor);
 router.get('/employee/search', searchEmployee);
-router.get('/zipcode/search', zipCodeDeleveires);
+router.get('/zipcode/search/:zipcode', zipCodeDeleveires);
 
 export default router;
