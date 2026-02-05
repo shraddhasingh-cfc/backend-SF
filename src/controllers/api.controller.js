@@ -241,7 +241,7 @@ export async function seachItems(req, res) {
   API: localhost:3000/api/customers/search?q=alex
   API LOGIN: localhost:3000/api/customers/search?q=<name, custid, email, contact, address>
  */
-export async function searchCustomer___(req, res) {
+export async function searchCustomer(req, res) {
   try {
     const q = (req.query.q || '').trim(); //log(q);
 
@@ -253,7 +253,7 @@ export async function searchCustomer___(req, res) {
     const like = `%${q}%`;
 
     const sql = `
-      SELECT TOP (20)
+      SELECT TOP (100)
         TRY_CAST(cust_id AS INT) AS cust_id,
         LTRIM(SUBSTRING(cust_nam, CHARINDEX('|', cust_nam) + 1, LEN(cust_nam))) AS cust_name,
         cust_st_1 AS address_1,
@@ -287,8 +287,6 @@ export async function searchCustomer___(req, res) {
     res.status(500).json({ ok: false, message: 'Internal Server Error' });
   }
 };
-
-
 
 
 export async function zipCodeDeleveires(req, res){
