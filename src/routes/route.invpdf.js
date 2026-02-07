@@ -28,7 +28,7 @@ function getInvoice(slug) {
 }
 
 router.post("/save", (req, res) => {
-    const { slug, form } = req.body; //log(form);
+    const { slug, form } = req.body; log(slug, form);
 
     if (!slug || !form) {
         return res.status(400).json({ error: "Invalid payload" });
