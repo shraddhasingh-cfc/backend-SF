@@ -241,7 +241,7 @@ export async function seachItems(req, res) {
   API: localhost:3000/api/customers/search?q=alex
   API LOGIN: localhost:3000/api/customers/search?q=<name, custid, email, contact, address>
  */
-export async function searchCustomer(req, res) {
+export async function searchCustomer__(req, res) {
   try {
     const q = (req.query.q || '').trim(); //log(q);
 
@@ -288,8 +288,62 @@ export async function searchCustomer(req, res) {
   }
 };
 
+export async function searchCustomer(req, res) {
+  try {
+    const q = (req.query.q || '').trim();
 
-export async function zipCodeDeleveires(req, res){
+    if (!q) {
+      return res.status(400).json({ ok: false, message: "Query parameter 'q' is required." });
+    }
+
+    const startsWithLike = `${q}%`;
+    const containsLike = `%${q}%`;
+
+    const sql = `
+      SELECT TOP (100)
+        TRY_CAST(cust_id AS INT) AS cust_id,
+        LTRIM(SUBSTRING(cust_nam, CHARINDEX('|', cust_nam) + 1, LEN(cust_nam))) AS cust_name,
+        cust_st_1 AS address_1,
+        cust_st_2 AS address_2,
+        cust_city   AS city,
+        cust_state  AS state,
+        cust_zip_cod AS zipcode,
+        cust_email  AS email,
+        cust_phone_no   AS phone_1,
+        cust_phone_no_2 AS phone_2
+      FROM dbo.CustMaster
+      WHERE
+        (
+          cust_id LIKE ?
+          OR LTRIM(SUBSTRING(cust_nam, CHARINDEX('|', cust_nam) + 1, LEN(cust_nam))) LIKE ?
+          OR cust_st_1 LIKE ?
+          OR cust_st_2 LIKE ?
+          OR cust_email LIKE ?
+          OR cust_phone_no LIKE ?
+          OR cust_phone_no_2 LIKE ?
+        )
+      ORDER BY
+        LTRIM(SUBSTRING(cust_nam, CHARINDEX('|', cust_nam) + 1, LEN(cust_nam))) ASC,
+        cust_id ASC;
+    `;
+
+    const rows = await runSql(sql, [
+      startsWithLike,   // cust_id
+      containsLike,     // cust_name (CONTAINS search)
+      startsWithLike,   // address_1
+      startsWithLike,   // address_2
+      startsWithLike,   // email
+      startsWithLike,   // phone_1
+      startsWithLike    // phone_2
+    ]);
+    res.json({ ok: true, count: rows.length, data: rows });
+  } catch (err) {
+    console.error('Customer search error:', err);
+    res.status(500).json({ ok: false, message: 'Internal Server Error' });
+  }
+}
+
+export async function zipCodeDeliveries(req, res){
   try {
     const zipcode = req.params?.zipcode || null; //console.log(zipcode)
     if(!zipcode) throw { status: 'ok', data: [], message: 'Inalid/Missing Zipcode' }

@@ -2,7 +2,7 @@ import express from 'express';
 const router = express.Router();
 import pdfRoutes from './route.invpdf.js';
 
-import { searchCustomer, seachItems, searchVendor, searchEmployee, zipCodeDeleveires } from '../controllers/api.controller.js';
+import { searchCustomer, seachItems, searchVendor, searchEmployee, zipCodeDeliveries } from '../controllers/api.controller.js';
 
 
 // router.get('/', (req, res)=>{
@@ -16,6 +16,6 @@ router.get('/inventory/search', seachItems);
 router.get('/inventory/search/:itemid', seachItems);
 router.get('/vendors/search', searchVendor);
 router.get('/employee/search', searchEmployee);
-router.get('/zipcode/search/:zipcode', zipCodeDeleveires);
+router.get('/zipcode/search/:zipcode', zipCodeDeliveries);
 
 export default router;

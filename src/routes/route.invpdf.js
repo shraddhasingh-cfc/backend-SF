@@ -28,7 +28,7 @@ function getInvoice(slug) {
 }
 
 router.post("/save", (req, res) => {
-    const { slug, form } = req.body; log(slug, form);
+    const { slug, form } = req.body; //log(slug, form);
 
     if (!slug || !form) {
         return res.status(400).json({ error: "Invalid payload" });
@@ -41,7 +41,7 @@ router.post("/save", (req, res) => {
 });
 
 router.get("/:slug", (req, res) => {
-    log(43, req.params.slug)
+    //log(43, req.params.slug)
     const invoice = getInvoice(req.params.slug);
     log(invoice?.sellerNames);
     // output  sellerNames: [ { name: 'Billy Terry', rv_code: 'BJT', storeCode= 's2' } ],
@@ -58,7 +58,7 @@ router.get("/:slug", (req, res) => {
 ================================================== */
 // full route /api/invoice/pdf/:slug
 router.get('/pdf/old/:slug', async (req, res) => {
-    const { slug } = req.params; console.log(slug);
+    const { slug } = req.params; //console.log(slug);
     let browser;
 
     try {
@@ -160,7 +160,8 @@ router.get("/pdf/:slug", async (req, res) => {
         return res.status(404).json({ error: "Invoice not found in cache" });
     }
 
-    const storeCode = invoice?.sellerNames?.[0]?.storeCode;
+    const storeCode = invoice?.sellerNames?.[0]?.storeCode; console.log(storeCode); 
+    // return res.json('ok')
 
     let targetFolderId;
     switch (storeCode) {
