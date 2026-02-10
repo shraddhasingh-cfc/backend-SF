@@ -153,7 +153,7 @@ router.get('/pdf/old/:slug', async (req, res) => {
 });
 
 router.get("/pdf/:slug", async (req, res) => {
-    const { slug } = req.params;
+    const { slug } = req.params; log(slug);
 
     const invoice = getInvoice(slug);
     if (!invoice) {

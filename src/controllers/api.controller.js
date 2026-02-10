@@ -54,8 +54,6 @@ export async function searchEmployee(req, res) {
   example http://localhost:5000/api/inventory/search?q=1127886  
  */
 
-
-
 // old query with local mysql tables
 export async function seachItems_(req, res) {
   try {
@@ -154,7 +152,9 @@ export async function seachItems(req, res) {
           a.[Available (Loc#1)]   AS [s1],
           a.[Available (Loc#2)]   AS [s2],
           a.[Available (Loc#999)] AS [999],
-          a.[Available (Loc#1)] + a.[Available (Loc#1)] + a.[Available (Loc#999)] as [total_avl],
+          a.[Available (Loc#1)] + 
+          a.[Available (Loc#1)] + 
+          a.[Available (Loc#999)] AS [total_avl],
           b.[item_prc_1]          AS [item_price],
           b.[item_prc_2]          AS [item_price_2],
           b.[item_prc_3]          AS [item_price_3],
@@ -168,7 +168,7 @@ export async function seachItems(req, res) {
             GROUP BY [ItemID], [ItemStatus]
           ) c
             ON c.[ItemID] = a.[item_id_1]
-        WHERE a.[item_id_1] = ?
+        WHERE a.[item_id_1] NOT LIKE '[*]%PART%' AND a.[item_id_1] = ?
       `;
 
       values.push(itemid);
@@ -185,7 +185,9 @@ export async function seachItems(req, res) {
           a.[Available (Loc#1)]   AS [s1],
           a.[Available (Loc#2)]   AS [s2],
           a.[Available (Loc#999)] AS [999],
-          a.[Available (Loc#1)] + a.[Available (Loc#1)] + a.[Available (Loc#999)] as [total_avl],
+          a.[Available (Loc#1)] + 
+          a.[Available (Loc#1)] + 
+          a.[Available (Loc#999)] AS [total_avl],
           b.[item_prc_1]          AS [item_price],
           b.[item_prc_2]          AS [item_price_2],
           b.[item_prc_3]          AS [item_price_3],
@@ -199,7 +201,7 @@ export async function seachItems(req, res) {
             GROUP BY [ItemID], [ItemStatus]
           ) c
             ON c.[ItemID] = a.[item_id_1]
-        WHERE 1 = 1
+        WHERE 1 = 1 AND a.[item_id_1] NOT LIKE '[*]%PART%'
       `;
 
       if (v) {
