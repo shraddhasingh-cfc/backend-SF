@@ -1,0 +1,1 @@
+import {generatePdfFromUrl} from "../utils/generate"

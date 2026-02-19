@@ -144,7 +144,11 @@ export async function seachItems(req, res) {
       // 🔹 Single item lookup
       sql = `
         SELECT
-          a.[item_vend_id]        AS [vendor],
+          -- a.[item_vend_id]        AS [vendor],
+          case 
+            when trim(a.[item_vend_id]) = '' then left(a.[item_desc], 4)
+            else trim(a.[item_vend_id])
+          end as [vendor],
           a.[item_id_1]           AS [itemId],
           a.[item_desc]           AS [sku],
           a.[item_desc_2]         AS [description],
@@ -177,7 +181,11 @@ export async function seachItems(req, res) {
       // 🔹 Search mode
       sql = `
         SELECT TOP (25)
-          a.[item_vend_id]        AS [vendor],
+          --a.[item_vend_id]        AS [vendor],
+          case 
+            when trim(a.[item_vend_id]) = '' then left(a.[item_desc], 4)
+            else trim(a.[item_vend_id])
+          end as [vendor],
           a.[item_id_1]           AS [itemId],
           a.[item_desc]           AS [sku],
           a.[item_desc_2]         AS [description],
