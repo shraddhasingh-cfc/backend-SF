@@ -160,19 +160,24 @@ router.get("/pdf/:slug", async (req, res) => {
         return res.status(404).json({ error: "Invoice not found in cache" });
     }
 
-    const storeCode = invoice?.sellerNames?.[0]?.storeCode; console.log(storeCode); 
+    const storeCode = invoice?.sellerNames?.[0]?.storeCode; console.log(storeCode);
+    const isQuoteSheet = slug.startsWith("QS_");
     // return res.json('ok')
 
     let targetFolderId;
-    switch (storeCode) {
-        case "S1":
-            targetFolderId = process.env.FOLDER_100;
-            break;
-        case "S2":
-            targetFolderId = process.env.FOLDER_200;
-            break;
-        default:
-            targetFolderId = process.env.FOLDER_ID_2;
+    if (isQuoteSheet) {
+        targetFolderId = process.env.QUOTESHEET_FOLDER_ID;
+    } else {
+        switch (storeCode) {
+            case "S1":
+                targetFolderId = process.env.FOLDER_100;
+                break;
+            case "S2":
+                targetFolderId = process.env.FOLDER_200;
+                break;
+            default:
+                targetFolderId = process.env.FOLDER_ID_2;
+        }
     }
 
     if (!targetFolderId) {
@@ -188,23 +193,27 @@ router.get("/pdf/:slug", async (req, res) => {
         const pdfBuffer = await generatePdfFromUrl(url);
 
         // Default upload to Salesform_PDF folder in googledrive public
-        uploadPdfToDrive(
-            pdfBuffer,
-            `${slug}.pdf`,
-            process.env.FOLDER_ID_2
-        ).catch(err => {
-            console.error("Drive upload failed:", err.message);
-        });
-
-
-        // ✅ Upload by location
-        uploadPdfToDrive(
+        // uploadPdfToDrive(
+        //     pdfBuffer,
+        //     `${slug}.pdf`,
+        //     process.env.FOLDER_ID_2
+        // ).catch(err => {
+        //     console.error("Drive upload failed:", err.message);
+        // });
+        await uploadPdfToDrive(
             pdfBuffer,
             `${slug}.pdf`,
             targetFolderId
-        ).catch(err => {
-            console.error("Drive upload failed:", err.message);
-        });
+        );
+
+        // ✅ Upload by location
+        // uploadPdfToDrive(
+        //     pdfBuffer,
+        //     `${slug}.pdf`,
+        //     targetFolderId
+        // ).catch(err => {
+        //     console.error("Drive upload failed:", err.message);
+        // });
 
         // ✅ Respond
         res.setHeader("Content-Type", "application/pdf");

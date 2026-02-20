@@ -196,6 +196,8 @@ export async function seachItems(req, res) {
           a.[Available (Loc#1)] + 
           a.[Available (Loc#1)] + 
           a.[Available (Loc#999)] AS [total_avl],
+          a.[Nailed (Loc#1)]      As [Nailed_s1],
+          a.[Nailed (Loc#2)]      As [Nailed_s2],
           b.[item_prc_1]          AS [item_price],
           b.[item_prc_2]          AS [item_price_2],
           b.[item_prc_3]          AS [item_price_3],
