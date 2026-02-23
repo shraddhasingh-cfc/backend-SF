@@ -4,7 +4,7 @@ import express from "express";
 import puppeteer from "puppeteer";
 import { generatePdfFromUrl } from "../utils/pdfGenerator.js";
 import { uploadPdfToDrive } from "../utils/googleDrive.js";
-
+import { formQuery } from "../config/db.js";
 // import { saveInvoice, getInvoice } from "../cache/invoiceCache.js";
 // import { db as mysqlPool } from "../config/db.js";
 
@@ -27,7 +27,8 @@ function getInvoice(slug) {
     return invoiceCache.get(slug);
 }
 
-router.post("/save", (req, res) => {
+router.post("/save", async(req, res) => {
+  console.log("SAVE HIT:", req.body.slug, new Date().toISOString());
     const { slug, form } = req.body; //log(slug, form);
 
     if (!slug || !form) {
@@ -35,22 +36,102 @@ router.post("/save", (req, res) => {
     }
 
     // Store invoice data temporarily (Redis / memory cache)
+   // saveInvoice(slug, form);
+
+   // res.json({ ok: true });
+   try {
+    // ✅ 1. Keep existing behavior (DO NOT REMOVE)
     saveInvoice(slug, form);
 
+    // ✅ 2. NEW: Save to invoices_archive using cfcFormPool
+    await formQuery(
+      `
+      INSERT INTO invoices_archive
+      (slug, invoice_type, editable, form_json)
+      VALUES (?, ?, ?, ?)
+      ON DUPLICATE KEY UPDATE
+        invoice_type = VALUES(invoice_type),
+        form_json = VALUES(form_json),
+        updated_at = NOW()
+      `,
+      [
+        slug,
+        form.invoiceType || "INV",
+        true,
+        JSON.stringify(form)
+      ]
+    );
+
     res.json({ ok: true });
-});
 
-router.get("/:slug", (req, res) => {
-    //log(43, req.params.slug)
-    const invoice = getInvoice(req.params.slug);
-    log(invoice?.sellerNames);
-    // output  sellerNames: [ { name: 'Billy Terry', rv_code: 'BJT', storeCode= 's2' } ],
-    if (!invoice) {
-        return res.status(404).json({ error: "Invoice not found" });
+  } catch (err) {
+    console.error("Archive save failed:", err);
+    res.status(500).json({ error: "Invoice save failed" });
+  }
+});
+/* ==================================================
+   ARCHIVE SEARCH (QS ONLY)
+   GET /api/invoice/archive/search?q=SUNIL
+================================================== */
+router.get("/archive/search", async (req, res) => {
+  try {
+    const q = (req.query.q || "").trim();
+
+    if (!q) {
+      return res.json({ ok: true, data: [] });
     }
-    res.json(invoice);
-});
 
+    const rows = await formQuery(
+      `
+      SELECT slug, created_at
+      FROM invoices_archive
+      WHERE invoice_type = 'QS'
+        AND slug LIKE ?
+      ORDER BY created_at DESC
+      LIMIT 20
+      `,
+      [`%${q.toUpperCase()}%`]
+    );
+
+    res.json({ ok: true, data: rows });
+
+  } catch (err) {
+    console.error("Archive search failed:", err);
+    res.status(500).json({ ok: false });
+  }
+});
+router.get("/:slug", async (req, res) => {
+  const slug = req.params.slug;
+
+  // 1️⃣ First check memory cache
+  const cached = getInvoice(slug);
+  if (cached) {
+    return res.json(cached);
+  }
+
+  // 2️⃣ Fallback → Check DB archive
+  try {
+    const rows = await formQuery(
+      "SELECT form_json FROM invoices_archive WHERE slug = ?",
+      [slug]
+    );
+
+    if (!rows.length) {
+      return res.status(404).json({ error: "Invoice not found" });
+    }
+
+    const form = JSON.parse(rows[0].form_json);
+
+    // Optional: re-cache
+    saveInvoice(slug, form);
+
+    res.json(form);
+
+  } catch (err) {
+    console.error("Archive load failed:", err);
+    res.status(500).json({ error: "Load failed" });
+  }
+});
 /* ==================================================
    GENERATE INVOICE PDF
    - Uses Puppeteer to render frontend invoice page
