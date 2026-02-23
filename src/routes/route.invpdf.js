@@ -27,17 +27,41 @@ function getInvoice(slug) {
     return invoiceCache.get(slug);
 }
 
-router.post("/save", (req, res) => {
-    const { slug, form } = req.body; //log(slug, form);
+router.post("/save", async (req, res) => {
+    const { slug, form, invoiceType } = req.body;
 
     if (!slug || !form) {
         return res.status(400).json({ error: "Invalid payload" });
     }
 
-    // Store invoice data temporarily (Redis / memory cache)
-    saveInvoice(slug, form);
+    try {
+        // ✅ 1. Keep existing memory cache logic (UNCHANGED)
+        saveInvoice(slug, form);
 
-    res.json({ ok: true });
+        // ✅ 2. Save FULL form JSON into MySQL archive table
+        await runMysql(
+            `
+            INSERT INTO invoices_archive (slug, invoice_type, editable, form_json)
+            VALUES (?, ?, ?, ?)
+            ON DUPLICATE KEY UPDATE
+                invoice_type = VALUES(invoice_type),
+                form_json = VALUES(form_json),
+                updated_at = CURRENT_TIMESTAMP
+            `,
+            [
+                slug,
+                invoiceType || "SALE",
+                false,
+                JSON.stringify(form)
+            ]
+        );
+
+        res.json({ ok: true });
+
+    } catch (err) {
+        console.error("Archive save failed:", err);
+        res.status(500).json({ error: "Failed to save invoice" });
+    }
 });
 
 router.get("/:slug", (req, res) => {

@@ -2,7 +2,18 @@
 -- create USER if not EXISTS form_user@'%' IDENTIFIED BY 'cfc@123456';
 -- GRANT ALL PRIVILEGES ON cfc_form.* TO form_user@'%' WITH GRANT OPTION;
 
--- 1️⃣ customers
+CREATE TABLE invoices_archive (
+  id BIGINT AUTO_INCREMENT PRIMARY KEY,
+  slug VARCHAR(100) UNIQUE,
+  invoice_type VARCHAR(10),
+  editable BOOLEAN DEFAULT FALSE,
+  form_json LONGTEXT NOT NULL,
+  created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+  updated_at DATETIME DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP
+);
+
+
+- 1️⃣ customers
 CREATE TABLE customers (
   customer_id BIGINT PRIMARY KEY AUTO_INCREMENT,
   primary_name VARCHAR(100) NOT NULL,
