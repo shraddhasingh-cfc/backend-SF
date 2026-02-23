@@ -42,10 +42,10 @@ export async function runMysql(query, values = []) {
 */
 
 const cfcFormConfig = {
-  host: process.env.MYSQL_HOSTNAME,
-  user: process.env.MYSQL_USERNAME,
-  password: process.env.MYSQL_PASSWROD,
-  database: process.env.MYSQL_DATABASE,
+  host: process.env.CFC_FORM_HOST,
+  user: process.env.CFC_FORM_USER,
+  password: process.env.CFC_FORM_PASSWORD,
+  database: process.env.CFC_FORM_DATABASE,
   port: 3306,
   connectionLimit: 10,
   waitForConnections: true,
@@ -62,7 +62,7 @@ const cfcFormPool = mysql.createPool(cfcFormConfig);
  */
 export async function formQuery(query, values = []) {
   try {
-    const [rows] = await mysqlPool.query(query, values);
+    const [rows] = await cfcFormPool.query(query, values);
     return rows;
   } catch (error) {
     console.error('❌ MySQL query error:', error.stack);
