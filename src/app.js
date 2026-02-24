@@ -1,10 +1,14 @@
-import 'dotenv/config'
+import dotenv from "dotenv";
+dotenv.config();
+
 import express from 'express';
 import path from 'path';
 import cors from "cors";
 import { fileURLToPath } from 'url';
 import apiRoutes from './routes/route.api.js';
 import os from 'os';
+import addressRoutes from "./routes/address.routes.js";
+
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -28,6 +32,8 @@ app.use(express.static(path.join(__dirname, 'public')))
 
 app.get('/help', (req, res)=> res.render('help', { title: 'Form Help'}))
 
+//ADDRESS VERIFICATION
+app.use("/api/address", addressRoutes);
 // ---------- API ROUTES ----------
 app.use('/api', apiRoutes)
 // app.post('/api/create-pdf', async (req, res) => {
