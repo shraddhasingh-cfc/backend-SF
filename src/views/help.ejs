@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <title>Sales Form Operation Guide</title>
@@ -12,220 +13,513 @@
         body {
             background-color: #f8f9fa;
         }
+
         .section-card {
             border-left: 5px solid #0d6efd;
         }
+
         .note {
             background: #fff3cd;
             border-left: 5px solid #ffc107;
         }
+
         .important {
             background: #f8d7da;
             border-left: 5px solid #dc3545;
         }
-        h1, h2 {
+
+        h1,
+        h2 {
             scroll-margin-top: 80px;
+        }
+
+        /* ===== SEARCH STYLES ===== */
+        .search-highlight {
+            background: yellow;
+            padding: 2px 4px;
+            border-radius: 4px;
+        }
+
+        .search-active {
+            background: orange !important;
         }
     </style>
 </head>
+
 <body>
 
-<div class="container my-5">
-    <div class="text-center mb-5">
-        <h1 class="fw-bold">Sales Form Operation Guide</h1>
-        <p class="text-muted">Formal Instructions & Standard Operating Procedure</p>
-    </div>
-
-    <!-- 1 -->
-    <div class="card mb-4 section-card">
-        <div class="card-body">
-            <h5 class="fw-bold">1. Start a New Sale</h5>
-            <ul>
-                <li>Click <strong>Clear Form</strong> before starting a new sale.</li>
-                <li>The date will automatically update to the current date.</li>
-            </ul>
+    <div class="container my-5">
+        <div class="text-center mb-5">
+            <h1 class="fw-bold">Sales Form Operation Guide</h1>
+            <p class="text-muted">Formal Instructions & Standard Operating Procedure</p>
         </div>
-    </div>
+        <!-- ===== SEARCH BOX START ===== -->
+        <div class="sticky-top bg-white py-3 mb-4 border-bottom" style="z-index:1000;">
+            <div class="input-group">
+                <input type="text" id="searchInput" class="form-control" placeholder="Search in guide..."
+                    onkeyup="searchGuide()">
 
-    <!-- 2 -->
-    <div class="card mb-4 section-card">
-        <div class="card-body">
-            <h5 class="fw-bold">2. Salesperson Details</h5>
-            <ul>
-                <li>Enter the <strong>Salesperson Name</strong>.</li>
-                <li><strong>Store Location</strong> auto-populates based on the first selected salesperson.</li>
-                <li>If the location is manually overwritten, the manual entry takes priority.</li>
-            </ul>
+                <button class="btn btn-outline-secondary" onclick="prevMatch()">↑</button>
+                <button class="btn btn-outline-secondary" onclick="nextMatch()">↓</button>
+                <button class="btn btn-outline-danger" onclick="clearSearch()">Clear</button>
+            </div>
+
+            <div class="mt-2 small text-muted" id="searchCount"></div>
         </div>
-    </div>
+        <!-- ===== SEARCH BOX END ===== -->
 
-    <!-- 3 -->
-    <div class="card mb-4 section-card">
-        <div class="card-body">
-            <h5 class="fw-bold">3. Customer Selection</h5>
-            <ul>
-                <li>Type <strong>First Name, Last Name, or Cell Number</strong>, then press <kbd>Enter</kbd>.</li>
-                <li>The system will auto-populate:
-                    <ul>
-                        <li>Name</li>
-                        <li>Cell</li>
-                        <li>Address</li>
-                        <li>City / State / Zip</li>
-                    </ul>
-                </li>
-                <li>For joint customers, enter the second person’s name in <strong>Owner 2</strong>.</li>
-            </ul>
-
-            <div class="important p-3 mt-3">
-                <strong>Important:</strong> The sale is made under <strong>Owner 1</strong>, and Owner 1’s signature is mandatory.
+        <!-- 1 -->
+        <div class="card mb-4 section-card">
+            <div class="card-body">
+                <h5 class="fw-bold">1. Start a New Sale</h5>
+                <ul>
+                    <li>Click <strong>Clear Form</strong> before starting a new sale.</li>
+                    <li>The date will automatically update to the current date.</li>
+                </ul>
             </div>
         </div>
-    </div>
 
-    <!-- 4 -->
-    <div class="card mb-4 section-card">
-        <div class="card-body">
-            <h5 class="fw-bold">4. New Customer Creation</h5>
-            <ul>
-                <li>If the customer does not exist, press <kbd>Enter</kbd> on <strong>+ New Customer</strong>.</li>
-                <li><strong>Mandatory Fields:</strong>
-                    <ul>
-                        <li>Owner 1 Name</li>
-                        <li>Address 1</li>
-                        <li>Cell</li>
-                        <li>City / State / Zip</li>
+        <!-- 2 -->
+        <div class="card mb-4 section-card">
+            <div class="card-body">
+                <h5 class="fw-bold">2. Salesperson Details</h5>
+                <ul>
+                    <li>Enter the <strong>Salesperson Name</strong>.</li>
+                    <li><strong>Store Location</strong> auto-populates based on the first selected salesperson.</li>
+                    <li>If the location is manually overwritten, the manual entry takes priority.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 3 -->
+        <div class="card mb-4 section-card">
+            <div class="card-body">
+                <h5 class="fw-bold">3. Customer Selection</h5>
+                <ul>
+                    <li>Type <strong>First Name, Last Name, or Cell Number</strong>, then press <kbd>Enter</kbd>.</li>
+                    <li>The system will auto-populate:
+                        <ul>
+                            <li>Name</li>
+                            <li>Cell</li>
+                            <li>Address</li>
+                            <li>City / State / Zip</li>
+                        </ul>
+                    </li>
+                    <li>For joint customers, enter the second person’s name in <strong>Owner 2</strong>.</li>
+                </ul>
+
+                <div class="important p-3 mt-3">
+                    <strong>Important:</strong> The sale is made under <strong>Owner 1</strong>, and Owner 1’s signature
+                    is mandatory.
+                </div>
+            </div>
+        </div>
+
+        <!-- 4 -->
+        <div class="card mb-4 section-card">
+            <div class="card-body">
+                <h5 class="fw-bold">4. New Customer Creation</h5>
+                <ul>
+                    <li>If the customer does not exist, press <kbd>Enter</kbd> on <strong>+ New Customer</strong>.</li>
+                    <li><strong>Mandatory Fields:</strong>
+                        <ul>
+                            <li>Owner 1 Name</li>
+                            <li>Address 1</li>
+                            <li>Cell</li>
+                            <li>City / State / Zip</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 5 -->
+        <div class="card mb-4 section-card">
+            <div class="card-body">
+                <h5 class="fw-bold">5. Shipping Information</h5>
+                <ul>
+                    <li>If Shipping Address is same as Billing, select <strong>Yes</strong> (space bar supported).</li>
+                    <li>Shipping fields will auto-populate.</li>
+                    <li>If <strong>No</strong>, all Ship-To fields must be entered manually.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 6 -->
+        <div class="card mb-4 section-card">
+            <div class="card-body">
+                <h5 class="fw-bold">6. Adding Items</h5>
+                <ul>
+                    <li>Press <kbd>Enter</kbd> on <strong>+ Add Items</strong>.</li>
+                    <li>Enter Vendor Name → select matching vendor → press <kbd>Enter</kbd>.</li>
+                    <li>Press <kbd>Tab</kbd> to SKU → select matching SKU.</li>
+                    <li>SKUs marked with <span class="text-danger fw-bold">N</span> or <span
+                            class="text-danger fw-bold">S</span> indicate discontinued items.</li>
+                    <li>
+                        Quantity Rules:
+                        <ul>
+                            <li>Quantity ≤ Available → proceed normally.</li>
+                            <li>Quantity > Available → contact Manager before proceeding.</li>
+                        </ul>
+                    </li>
+                    <li>SKU and Description auto-populate.</li>
+                    <li>Enter Quantity and select Location.</li>
+                    <li>SKU Fulfilled From auto-populates.</li>
+                    <li>Order Type is system-determined.</li>
+                    <li>Press <kbd>Enter</kbd> on <strong>+ Add Item</strong> to add more items.</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 7 -->
+        <div class="card mb-4 section-card">
+            <div class="card-body">
+                <h5 class="fw-bold">7. Package Rules</h5>
+                <ul>
+                    <li>If <strong>Extended Price</strong> is entered, the item is NOT package-eligible.</li>
+                    <li>Leave Extended Price blank to make item package-eligible.</li>
+                    <li>Select a Package → press <kbd>Enter</kbd> → add items → enter Package Amount → apply package.
+                    </li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- 8 -->
+        <div class="card mb-4 section-card">
+            <div class="card-body">
+                <h5 class="fw-bold">8. Pickup / Delivery</h5>
+                <ul>
+                    <li>Select <strong>Pickup</strong> or <strong>Delivery</strong> using space bar.</li>
+                    <li>Pickup: Select pickup date.</li>
+                    <li>Delivery: Calendar appears — only blue dates are available for that ZIP code.</li>
+                    <li>Enter Delivery Charge in <strong>DC Extended</strong>.</li>
+                    <li>Special Delivery may be selected if:
+                        <ul>
+                            <li>Customer requests earlier delivery, or</li>
+                            <li>Delivery is unavailable for that ZIP code.</li>
+                        </ul>
+                    </li>
+                </ul>
+                <!-- Took With Rule -->
+                <div >
+                    <strong>TW (Took With) Eligibility:</strong>
+                    <ul class="mb-0">
+                        <li>A <strong>TW (Took With)</strong> dropdown will appear if the selected item is eligible.
+                        </li>
+                        <li>An item is eligible for Took With only when the <strong>Store Location matches the Item
+                                Location</strong>.</li>
+                        <li>Example: If the store is <strong>Arden</strong> and the item location is <strong>S1</strong>
+                            or <strong>NS1</strong>, the item is eligible to be marked as Took With.</li>
                     </ul>
-                </li>
-            </ul>
-        </div>
-    </div>
+                </div>
 
-    <!-- 5 -->
-    <div class="card mb-4 section-card">
-        <div class="card-body">
-            <h5 class="fw-bold">5. Shipping Information</h5>
-            <ul>
-                <li>If Shipping Address is same as Billing, select <strong>Yes</strong> (space bar supported).</li>
-                <li>Shipping fields will auto-populate.</li>
-                <li>If <strong>No</strong>, all Ship-To fields must be entered manually.</li>
-            </ul>
-        </div>
-    </div>
-
-    <!-- 6 -->
-    <div class="card mb-4 section-card">
-        <div class="card-body">
-            <h5 class="fw-bold">6. Adding Items</h5>
-            <ul>
-                <li>Press <kbd>Enter</kbd> on <strong>+ Add Items</strong>.</li>
-                <li>Enter Vendor Name → select matching vendor → press <kbd>Enter</kbd>.</li>
-                <li>Press <kbd>Tab</kbd> to SKU → select matching SKU.</li>
-                <li>SKUs marked with <span class="text-danger fw-bold">N</span> or <span class="text-danger fw-bold">S</span> indicate discontinued items.</li>
-                <li>
-                    Quantity Rules:
-                    <ul>
-                        <li>Quantity ≤ Available → proceed normally.</li>
-                        <li>Quantity > Available → contact Manager before proceeding.</li>
+                <div class="important p-3 mt-3 px-3">
+                    <strong>Customer Signature Required for Took With:</strong>
+                    <ul class="mb-0">
+                        <li>If an item is marked as <strong>Took With (TW)</strong>, the <strong>customer’s signature is
+                                mandatory</strong>.</li>
+                        <li>You will <strong>not be able to proceed to invoice or complete the sale</strong> without the
+                            required customer signature.</li>
+                        <li>Ensure the customer signs before finalizing the transaction.</li>
                     </ul>
-                </li>
-                <li>SKU and Description auto-populate.</li>
-                <li>Enter Quantity and select Location.</li>
-                <li>SKU Fulfilled From auto-populates.</li>
-                <li>Order Type is system-determined.</li>
-                <li>Press <kbd>Enter</kbd> on <strong>+ Add Item</strong> to add more items.</li>
-            </ul>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <!-- 7 -->
-    <div class="card mb-4 section-card">
-        <div class="card-body">
-            <h5 class="fw-bold">7. Package Rules</h5>
-            <ul>
-                <li>If <strong>Extended Price</strong> is entered, the item is NOT package-eligible.</li>
-                <li>Leave Extended Price blank to make item package-eligible.</li>
-                <li>Select a Package → press <kbd>Enter</kbd> → add items → enter Package Amount → apply package.</li>
-            </ul>
+        <!-- 9 -->
+        <div class="card mb-4 section-card">
+            <div class="card-body">
+                <h5 class="fw-bold">9. 5-Year Comprehensive Plan</h5>
+                <ul>
+                    <li>Select <strong>Yes</strong> and enter amount in CP Extended, or</li>
+                    <li>Select <strong>No</strong> if declined.</li>
+                </ul>
+            </div>
+            <div class="important p-3 mt-3 px-3">
+                <strong>Customer Signature Required:</strong>
+                <ul class="mb-0">
+                    <li>The customer must sign whether they select <strong>Yes</strong> or <strong>No</strong>.</li>
+                    <li>A signature is mandatory to confirm acceptance or decline of the 5-Year Comprehensive Plan.</li>
+                    <li>The sale must not be finalized without the customer’s signature.</li>
+                </ul>
+            </div>
         </div>
-    </div>
 
-    <!-- 8 -->
-    <div class="card mb-4 section-card">
-        <div class="card-body">
-            <h5 class="fw-bold">8. Pickup / Delivery</h5>
-            <ul>
-                <li>Select <strong>Pickup</strong> or <strong>Delivery</strong> using space bar.</li>
-                <li>Pickup: Select pickup date.</li>
-                <li>Delivery: Calendar appears — only blue dates are available for that ZIP code.</li>
-                <li>Enter Delivery Charge in <strong>DC Extended</strong>.</li>
-                <li>Special Delivery may be selected if:
-                    <ul>
-                        <li>Customer requests earlier delivery, or</li>
-                        <li>Delivery is unavailable for that ZIP code.</li>
+        <!-- 10 -->
+        <div class="card mb-4 section-card">
+            <div class="card-body">
+                <h5 class="fw-bold">10. Payment Section</h5>
+                <ul>
+                    <li>Enter payment amounts via:
+                        <ul>
+                            <li>Cash</li>
+                            <li>Check</li>
+                            <li>Visa</li>
+                            <li>Mastercard</li>
+                            <li>Discover</li>
+                            <li>Amex</li>
+                            <li>CFC Gift Card</li>
+                            <li>Finance</li>
+                        </ul>
+                    </li>
+                    <li>The system automatically calculates totals and terms.</li>
+                </ul>
+                <!-- Manager Approval Rule -->
+                <div class="important p-3 mt-3">
+                    <strong>Manager Signature Required:</strong>
+                    <ul class="mb-0">
+                        <li>If payment is made using <strong>Cash</strong> or <strong>Amex</strong>, <strong>Manager
+                                Signature is mandatory</strong>.</li>
+                        <li>Ensure the manager reviews and signs before completing the sale.</li>
+                        <li>The sale must not be finalized without the required approval.</li>
                     </ul>
-                </li>
-            </ul>
+                </div>
+            </div>
         </div>
-    </div>
 
-    <!-- 9 -->
-    <div class="card mb-4 section-card">
-        <div class="card-body">
-            <h5 class="fw-bold">9. 5-Year Comprehensive Plan</h5>
-            <ul>
-                <li>Select <strong>Yes</strong> and enter amount in CP Extended, or</li>
-                <li>Select <strong>No</strong> if declined.</li>
-            </ul>
+        <!-- 11 -->
+        <div class="card mb-4 section-card">
+            <div class="card-body">
+                <h5 class="fw-bold">11. Signatures</h5>
+                <ul>
+                    <li>Capture signatures using the signature pad.</li>
+                    <li>Signature is required for each applicable section.</li>
+                </ul>
+            </div>
         </div>
-    </div>
 
-    <!-- 10 -->
-    <div class="card mb-4 section-card">
-        <div class="card-body">
-            <h5 class="fw-bold">10. Payment Section</h5>
-            <ul>
-                <li>Enter payment amounts via:
-                    <ul>
-                        <li>Cash</li>
-                        <li>Check</li>
-                        <li>Visa / Mastercard</li>
-                        <li>CFC Gift Card</li>
-                        <li>Finance</li>
+        <!-- 12 -->
+        <div class="card mb-5 section-card">
+            <div class="card-body">
+                <h5 class="fw-bold">12. Invoice & Save</h5>
+                <ul>
+                    <li>Press <kbd>Enter</kbd> on <strong>View Invoice</strong> to preview.</li>
+                    <li>Press <kbd>Enter</kbd> or click <strong>Print Invoice</strong> if required.</li>
+                    <li>Press <kbd>Enter</kbd> or click <strong>Save Sale</strong> to commit the sale.</li>
+                    <li>PDF auto-saves to:
+                        <br><strong>Google Drive → 100 / 200 → salesform_pdf</strong>
+                    </li>
+                    <li>Click <strong>Internal Invoice</strong> to view internal version.</li>
+                </ul>
+            </div>
+        </div>
+        <!-- 13 -->
+        <div class="card mb-5 section-card">
+            <div class="card-body">
+                <h5 class="fw-bold">13. Delivery Mode Change After Invoice</h5>
+
+                <ul>
+                    <li>If an <strong>invoice has already been created</strong> and the customer later requests a change
+                        in delivery mode (e.g., Pickup → Delivery or Delivery → Pickup), additional charges may apply.
+                    </li>
+
+                    <li>You must add the appropriate charge item before saving the updated sale.</li>
+                </ul>
+
+                <div class="note p-3 mt-3">
+                    <strong>Use the following Item IDs when charging:</strong>
+                    <ul class="mb-0">
+                        <li><strong>274136</strong> – Complimentary Delivery</li>
+                        <li><strong>2081</strong> – CFC Delivery Charge and Setup</li>
+                        <li><strong>47384</strong> – CFC Outside Delivery and Setup</li>
+                        <li><strong>47385</strong> – CFC Assembly Charge</li>
                     </ul>
-                </li>
-                <li>The system automatically calculates totals and terms.</li>
-            </ul>
+                </div>
+
+                <div class="important p-3 mt-3">
+                    <strong>Important:</strong>
+                    <ul class="mb-0">
+                        <li>Always verify the correct delivery type before applying charges.</li>
+                        <li>Ensure the charge item is added to the invoice before saving.</li>
+                        <li>Do not overwrite the original invoice — update properly and re-save.</li>
+                    </ul>
+                </div>
+            </div>
         </div>
-    </div>
+        <!-- 14 -->
+        <div class="card mb-5 section-card">
+            <div class="card-body">
+                <h5 class="fw-bold">14. Address Verification (USPS)</h5>
 
-    <!-- 11 -->
-    <div class="card mb-4 section-card">
-        <div class="card-body">
-            <h5 class="fw-bold">11. Signatures</h5>
-            <ul>
-                <li>Capture signatures using the signature pad.</li>
-                <li>Signature is required for each applicable section.</li>
-            </ul>
+                <ul>
+                    <li>The system is integrated with <strong>USPS Address Verification</strong>.</li>
+                    <li>After entering the address, press <kbd>Enter</kbd> on <strong>Verify Address</strong>.</li>
+                </ul>
+
+                <div class="note p-3 mt-3">
+                    <strong>Automatic Verification:</strong>
+                    <ul class="mb-0">
+                        <li>If the address is verified successfully, the system will display:
+                            <br><strong>"Address Verified by USPS"</strong>.
+                        </li>
+                        <li>No further action is required.</li>
+                    </ul>
+                </div>
+
+                <div class="important p-3 mt-3">
+                    <strong>Manual Approval:</strong>
+                    <ul class="mb-0">
+                        <li>If USPS cannot verify the address, you have the authority to <strong>approve the address
+                                manually</strong>.</li>
+                        <li>In this case, the <strong>Internal Invoice</strong> will clearly state that:
+                            <br><strong>"Address Verified Manually (Not Verified by USPS)"</strong>.
+                        </li>
+                        <li>Ensure the address is double-checked before manual approval.</li>
+                    </ul>
+                </div>
+
+            </div>
         </div>
-    </div>
+        <!-- 15 -->
+        <div class="card mb-5 section-card">
+            <div class="card-body">
+                <h5 class="fw-bold">15. Nailed Down Items (NS1 / NS2)</h5>
 
-    <!-- 12 -->
-    <div class="card mb-5 section-card">
-        <div class="card-body">
-            <h5 class="fw-bold">12. Invoice & Save</h5>
-            <ul>
-                <li>Press <kbd>Enter</kbd> on <strong>View Invoice</strong> to preview.</li>
-                <li>Press <kbd>Enter</kbd> or click <strong>Print Invoice</strong> if required.</li>
-                <li>Press <kbd>Enter</kbd> or click <strong>Save Sale</strong> to commit the sale.</li>
-                <li>PDF auto-saves to:
-                    <br><strong>Google Drive → 100 / 200 → salesform_pdf</strong>
-                </li>
-                <li>Click <strong>Internal Invoice</strong> to view internal version.</li>
-            </ul>
+                <ul>
+                    <li>Items marked as <strong>NS1</strong> (Store 1) or <strong>NS2</strong> (Store 2) indicate
+                        <strong>Nailed Down</strong> inventory that is currently on showroom display.
+                    </li>
+                    <li>These items are designated display pieces used to present merchandise to customers and are not
+                        standard warehouse inventory.</li>
+                </ul>
+
+                <div class="important p-3 mt-3">
+                    <strong>Manager Approval Required:</strong>
+                    <ul class="mb-0">
+                        <li>If you choose to sell a nailed down (display) item, <strong>manager approval is
+                                required</strong>.</li>
+                        <li>The system automatically detects when an NS1 or NS2 item is selected.</li>
+                        <li>You will <strong>not be able to proceed to invoice or complete the sale</strong> unless the
+                            manager approves the request.</li>
+                    </ul>
+                </div>
+
+                <div class="note p-3 mt-3">
+                    <strong>Operational Reminder:</strong>
+                    <ul class="mb-0">
+                        <li>Please confirm with management before committing a display item to a customer.</li>
+                        <li>Selecting a nailed down item without prior approval may delay the sales process.</li>
+                    </ul>
+                </div>
+
+            </div>
         </div>
+
     </div>
+    <!-- ===== SEARCH SCRIPT START ===== -->
+    <script>
+        let matches = [];
+        let currentMatchIndex = -1;
 
-</div>
+        // Remove old highlights
+        function clearHighlights() {
+            document.querySelectorAll(".search-highlight").forEach(el => {
+                const parent = el.parentNode;
+                parent.replaceChild(document.createTextNode(el.textContent), el);
+                parent.normalize();
+            });
+        }
 
+        // Clear everything
+        function clearSearch() {
+            clearHighlights();
+            matches = [];
+            currentMatchIndex = -1;
+            document.getElementById("searchInput").value = "";
+            document.getElementById("searchCount").innerText = "";
+        }
+
+        // Main search function
+        function searchGuide() {
+            clearHighlights();
+            matches = [];
+            currentMatchIndex = -1;
+
+            const input = document.getElementById("searchInput").value.trim();
+            if (!input) {
+                document.getElementById("searchCount").innerText = "";
+                return;
+            }
+
+            const regex = new RegExp(input, "gi");
+            const sections = document.querySelectorAll(".section-card");
+
+            sections.forEach(section => {
+                walk(section);
+            });
+
+            function walk(node) {
+                if (node.nodeType === 3) {
+                    const match = node.nodeValue.match(regex);
+                    if (match) {
+                        const span = document.createElement("span");
+                        span.className = "search-highlight";
+                        span.textContent = node.nodeValue;
+                        span.innerHTML = node.nodeValue.replace(regex, m => {
+                            return `<span class="search-highlight">${m}</span>`;
+                        });
+                        node.parentNode.replaceChild(span, node);
+                    }
+                } else if (node.nodeType === 1 && node.childNodes && !["SCRIPT", "STYLE"].includes(node.tagName)) {
+                    node.childNodes.forEach(child => walk(child));
+                }
+            }
+
+            matches = document.querySelectorAll(".search-highlight");
+
+            if (matches.length > 0) {
+                currentMatchIndex = 0;
+                focusMatch();
+            }
+
+            updateCounter();
+        }
+
+        // Highlight active match
+        function focusMatch() {
+            matches.forEach(m => m.classList.remove("search-active"));
+
+            if (matches[currentMatchIndex]) {
+                matches[currentMatchIndex].classList.add("search-active");
+                matches[currentMatchIndex].scrollIntoView({
+                    behavior: "smooth",
+                    block: "center"
+                });
+            }
+        }
+
+        // Next button
+        function nextMatch() {
+            if (matches.length === 0) return;
+
+            currentMatchIndex = (currentMatchIndex + 1) % matches.length;
+            focusMatch();
+            updateCounter();
+        }
+
+        // Previous button
+        function prevMatch() {
+            if (matches.length === 0) return;
+
+            currentMatchIndex =
+                (currentMatchIndex - 1 + matches.length) % matches.length;
+            focusMatch();
+            updateCounter();
+        }
+
+        // Update counter display
+        function updateCounter() {
+            const counter = document.getElementById("searchCount");
+
+            if (matches.length === 0) {
+                counter.innerText = "No results found";
+            } else {
+                counter.innerText =
+                    (currentMatchIndex + 1) + " of " + matches.length + " results";
+            }
+        }
+    </script>
+    <!-- ===== SEARCH SCRIPT END ===== -->
 </body>
+
 </html>
