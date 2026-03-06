@@ -1,5 +1,4 @@
 import { verifyAddressUSPS } from "../services/usps.service.js";
-
 export async function verifyAddressController(req, res) {
   try {
     const { address1, city, state, zip } = req.body;

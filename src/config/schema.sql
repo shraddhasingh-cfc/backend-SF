@@ -6,6 +6,7 @@ CREATE TABLE invoices_archive (
   id BIGINT AUTO_INCREMENT PRIMARY KEY,
   slug VARCHAR(100) UNIQUE,
   invoice_type VARCHAR(10),
+  transaction_mode VARCHAR(10),
   editable BOOLEAN DEFAULT FALSE,
   form_json LONGTEXT NOT NULL,
   created_at DATETIME DEFAULT CURRENT_TIMESTAMP,

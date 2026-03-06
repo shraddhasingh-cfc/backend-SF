@@ -8,7 +8,7 @@ import { fileURLToPath } from 'url';
 import apiRoutes from './routes/route.api.js';
 import os from 'os';
 import addressRoutes from "./routes/address.routes.js";
-
+import adminRoutes from "./routes/admin.routes.js";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
@@ -31,7 +31,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.use(express.static(path.join(__dirname, 'public')))
 
 app.get('/help', (req, res)=> res.render('help', { title: 'Form Help'}))
-
+app.use("/api/admin", adminRoutes);
 //ADDRESS VERIFICATION
 app.use("/api/address", addressRoutes);
 // ---------- API ROUTES ----------
