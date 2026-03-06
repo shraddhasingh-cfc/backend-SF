@@ -303,9 +303,11 @@ router.get("/pdf/:slug", async (req, res) => {
   }
   const invoiceType = typeRows[0].invoice_type;
   const isQuoteSheet = invoiceType === "QS";
+  console.log(isQuoteSheet)
   let targetFolderId;
   if (isQuoteSheet) {
     targetFolderId = process.env.FOLDER_QS;
+    console.log(targetFolderId)
   } else {
     switch (storeCode) {
       case "S1":
