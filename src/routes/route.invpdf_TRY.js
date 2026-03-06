@@ -166,7 +166,7 @@ router.get("/pdf/:slug", async (req, res) => {
 
     let targetFolderId;
     if (isQuoteSheet) {
-        targetFolderId = process.env.QUOTESHEET_FOLDER_ID;
+        targetFolderId = process.env.FOLDER_QS;
     } else {
         switch (storeCode) {
             case "S1":
