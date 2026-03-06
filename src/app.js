@@ -1,6 +1,5 @@
 import dotenv from "dotenv";
 dotenv.config();
-
 import express from 'express';
 import path from 'path';
 import cors from "cors";
@@ -9,26 +8,23 @@ import apiRoutes from './routes/route.api.js';
 import os from 'os';
 import addressRoutes from "./routes/address.routes.js";
 import adminRoutes from "./routes/admin.routes.js";
-
 const app = express();
 const PORT = process.env.PORT || 3000;
-
 app.use(cors({
   origin: true, // 🔥 reflect request origin
   methods: ["GET", "POST", "OPTIONS"],
   allowedHeaders: ["Content-Type"],
 }));
-
 // ESM __dirname
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
-
 // ---------- MIDDLEWARE ----------
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
+
 app.set('view engine', 'ejs');
 app.set('views', path.join(__dirname, 'views'));
-app.use(express.static(path.join(__dirname, 'public')))
+//app.use(express.static(path.join(__dirname, 'public')))
 
 app.get('/help', (req, res)=> res.render('help', { title: 'Form Help'}))
 app.use("/api/admin", adminRoutes);
@@ -47,8 +43,8 @@ app.use('/api', apiRoutes)
 // });
 
 // ---------- SERVE REACT BUILD ----------
-app.use(express.static(path.join(__dirname, 'public')));
-
+//app.use(express.static(path.join(__dirname, 'public')));
+app.use(express.static(path.join(__dirname, 'public')))
 // ---------- SPA FALLBACK ----------
 app.get(/.*/, (req, res) => {
   res.sendFile(path.join(__dirname, 'public', 'index.html'));
